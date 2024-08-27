@@ -27,9 +27,17 @@ public_users.post("/register", (req, res) => {
 });
 
 // Get the book list available in the shop
-public_users.get("/", function (req, res) {
+public_users.get("/", async function (req, res) {
   //Write your code here
-  return res.send(JSON.stringify(books, null, 4));
+  try {
+    const response = await axios.get("BOOK_SHOP_URL");
+    const books = response.data;
+    return res.send(JSON.stringify(books, null, 4));
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error fetching books", error: error.message });
+  }
 });
 
 // Get book details based on ISBN
