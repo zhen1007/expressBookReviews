@@ -41,15 +41,20 @@ public_users.get("/", async function (req, res) {
 });
 
 // Get book details based on ISBN
-public_users.get("/isbn/:isbn", function (req, res) {
+public_users.get("/isbn/:isbn", async function (req, res) {
   //Write your code here
-  const book = books[req.params.isbn];
-
-  if (book) {
-    return res.send(JSON.stringify(book));
+  try {
+    const response = await axios.get(`BOOK_SHOP_URL/${isbn}`);
+    const book = response.data;
+    if (response.result) {
+      return res.send(JSON.stringify(book));
+    }
+    return res.status(500).json({ message: "Not found the book" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error fetching books", error: error.message });
   }
-
-  return res.status(500).json({ message: "Not found the book" });
 });
 
 // Get book details based on author
